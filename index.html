@@ -389,13 +389,248 @@
     border-top: 1px solid #2a2a2a;
   }
 
+
+  /* ---------- HERO CINEMATOGRÁFICO ---------- */
+  .hero{
+    height: 72vh;
+    min-height: 520px;
+    padding: 0 4% 7%;
+    background-size: cover;
+    background-position: center;
+  }
+  .hero::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      linear-gradient(90deg, rgba(20,20,20,.98) 0%, rgba(20,20,20,.78) 38%, rgba(20,20,20,.22) 68%, rgba(20,20,20,.05) 100%);
+    pointer-events:none;
+  }
+  .hero-cover{
+    position:absolute;
+    right:8%;
+    bottom:9%;
+    width:210px;
+    aspect-ratio:2/3;
+    object-fit:cover;
+    border-radius:6px;
+    box-shadow:0 18px 50px rgba(0,0,0,.65);
+    z-index:1;
+    transform:rotate(2deg);
+    transition:transform .3s ease;
+  }
+  .hero:hover .hero-cover{ transform:rotate(0deg) scale(1.02); }
+  .hero-content{ z-index:2; max-width:620px; }
+  .hero-title{ font-size:clamp(36px,5vw,64px); }
+
+
+  /* ---------- DESTAQUES EM CARROSSEL ---------- */
+  .hero{ overflow:hidden; }
+  .hero-backdrop{
+    position:absolute; inset:0;
+    background-position:center;
+    background-size:cover;
+    filter:blur(18px);
+    transform:scale(1.08);
+    opacity:.28;
+    transition:background-image .45s ease, opacity .3s ease;
+  }
+  .hero-arrow{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    z-index:5;
+    width:48px; height:48px;
+    border-radius:50%;
+    background:rgba(0,0,0,.55);
+    color:#fff;
+    font-size:42px;
+    line-height:42px;
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid rgba(255,255,255,.16);
+    transition:background .2s, transform .2s;
+  }
+  .hero-arrow:hover{
+    background:rgba(0,0,0,.82);
+    transform:translateY(-50%) scale(1.06);
+  }
+  .hero-arrow-left{ left:18px; }
+  .hero-arrow-right{ right:18px; }
+  .hero-cover{
+    z-index:2;
+    right:9%;
+    bottom:10%;
+    width:240px;
+    max-height:74%;
+    object-fit:cover;
+    border-radius:7px;
+    box-shadow:0 20px 60px rgba(0,0,0,.75);
+    transform:rotate(2deg);
+  }
+  .hero-content{ z-index:3; max-width:650px; }
+  .hero-title{ font-size:clamp(38px,5vw,66px); }
+  .hero-dots{
+    position:absolute;
+    z-index:6;
+    left:50%;
+    bottom:24px;
+    transform:translateX(-50%);
+    display:flex;
+    gap:8px;
+  }
+  .hero-dot{
+    width:9px; height:9px; border-radius:50%;
+    border:0; padding:0; background:#777;
+    cursor:pointer;
+    transition:transform .2s, background .2s;
+  }
+  .hero-dot.active{ background:#fff; transform:scale(1.25); }
+
+  /* fileiras mais próximas do modelo */
+  .rows{ padding-top:6px; }
+  .row{ margin-bottom:30px; }
+  .row-title{ font-size:20px; }
+  .card{ width:170px; flex:0 0 170px; }
+  .card-cover{ box-shadow:0 7px 22px rgba(0,0,0,.28); }
+  .card:hover{ transform:scale(1.06); z-index:4; }
+
+  @media (max-width:900px){
+    .hero-cover{ right:7%; width:175px; }
+    .hero-content{ max-width:62%; }
+  }
+  @media (max-width:700px){
+    .hero-arrow{ width:38px; height:38px; font-size:32px; }
+    .hero-arrow-left{ left:8px; }
+    .hero-arrow-right{ right:8px; }
+    .hero-cover{ width:125px; right:6%; bottom:13%; opacity:.72; }
+    .hero-content{ max-width:100%; }
+    .hero-title{ max-width:78%; }
+    .hero-buttons{ flex-wrap:wrap; }
+    .hero-dots{ bottom:14px; }
+  }
+
+  /* ---------- FAVORITOS ---------- */
+  .favorites-row{ display:none; }
+  .favorites-row.has-books{ display:block; }
+  .favorites-empty{
+    padding:18px 4%;
+    color:var(--text-dim);
+    font-size:14px;
+  }
+
+  /* ---------- BUSCA ---------- */
+  .search-box:focus-within{ border-color:#888; box-shadow:0 0 0 2px rgba(255,255,255,.06); }
+  .search-result-info{
+    display:none;
+    padding:18px 4% 0;
+    color:var(--text-dim);
+    font-size:14px;
+  }
+  .search-result-info.show{ display:block; }
+
+  /* ---------- PERFIL ---------- */
+  .profile-btn{
+    display:flex; align-items:center; gap:8px;
+    background:#262626; color:#fff;
+    padding:8px 13px; border-radius:20px;
+    font-size:13px; font-weight:700;
+    transition:background .2s, transform .2s;
+  }
+  .profile-btn:hover{ background:#333; transform:translateY(-1px); }
+  .profile-btn .avatar{
+    width:22px; height:22px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--red); font-size:11px;
+  }
+  .profile-overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,.78);
+    display:none; align-items:center; justify-content:center;
+    z-index:300; padding:20px;
+  }
+  .profile-overlay.open{ display:flex; }
+  .profile-panel{
+    width:100%; max-width:760px; max-height:90vh; overflow:auto;
+    background:#1f1f1f; border-radius:10px; padding:30px;
+    position:relative; box-shadow:0 20px 70px rgba(0,0,0,.7);
+  }
+  .profile-close{
+    position:absolute; top:16px; right:16px;
+    width:36px; height:36px; border-radius:50%;
+    background:#111; color:#fff; font-size:24px;
+  }
+  .profile-head{ display:flex; align-items:center; gap:18px; margin-bottom:28px; }
+  .profile-avatar{
+    width:68px; height:68px; border-radius:50%;
+    background:var(--red); display:flex; align-items:center; justify-content:center;
+    font-size:28px; font-weight:800;
+  }
+  .profile-name{ font-size:26px; font-weight:800; }
+  .profile-sub{ color:var(--text-dim); margin-top:4px; }
+  .stats-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:26px;
+  }
+  .profile-stat{
+    background:#262626; border-radius:8px; padding:16px; text-align:center;
+  }
+  .profile-stat strong{ display:block; font-size:24px; }
+  .profile-stat span{ color:var(--text-dim); font-size:12px; }
+  .profile-section-title{ font-size:18px; font-weight:800; margin:24px 0 12px; }
+  .progress-wrap{ background:#333; height:8px; border-radius:10px; overflow:hidden; }
+  .progress-bar{ height:100%; width:0; background:var(--red); transition:width .3s; }
+  .badge-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+  .badge{
+    background:#262626; border-radius:8px; padding:14px 8px; text-align:center;
+    opacity:.38; filter:grayscale(1); transition:.2s;
+  }
+  .badge.unlocked{ opacity:1; filter:none; }
+  .badge-icon{ font-size:28px; }
+  .badge-name{ font-size:11px; font-weight:700; margin-top:6px; }
+  .profile-list{ display:grid; gap:8px; }
+  .profile-book{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:10px 12px; background:#262626; border-radius:6px;
+  }
+  .profile-book-title{ font-size:13px; font-weight:700; }
+  .profile-book-meta{ font-size:11px; color:var(--text-dim); }
+  .profile-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+  .profile-action{
+    background:#333; color:#fff; border:1px solid #444;
+    border-radius:20px; padding:7px 12px; font-size:12px; font-weight:700;
+  }
+
+  /* ---------- AÇÕES DE LEITURA ---------- */
+  .reading-actions{
+    display:flex; gap:8px; flex-wrap:wrap; margin:0 0 20px;
+  }
+  .reading-btn{
+    background:#333; color:#fff; border:1px solid #444;
+    border-radius:20px; padding:7px 12px; font-size:12px; font-weight:700;
+  }
+  .reading-btn.active{ background:var(--red); border-color:var(--red); }
+  .reading-progress{ margin:0 0 20px; display:none; }
+  .reading-progress.show{ display:block; }
+  .reading-progress label{ display:flex; justify-content:space-between; color:var(--text-dim); font-size:12px; margin-bottom:6px; }
+  .reading-progress input{ width:100%; accent-color:var(--red); }
+
+  @media (max-width: 900px){
+    .hero-cover{ right:5%; width:170px; opacity:.8; }
+    .hero-content{ max-width:58%; }
+    .stats-grid{ grid-template-columns:repeat(2,1fr); }
+    .badge-grid{ grid-template-columns:repeat(2,1fr); }
+  }
+
   @media (max-width: 700px){
     .nav-links{ display:none; }
     .card{ width: 122px; }
     .modal-body{ flex-direction: column; }
     .modal-cover{ margin-top: -40px; flex: 0 0 130px; width: 130px; }
-    .modal-banner-title{ margin-left: 0; }
-    .hero{ height: 70vh; }
+    .modal-banner-title{ margin-left: 0; font-size:22px; }
+    .hero{ height: 78vh; min-height:520px; }
+    .hero-cover{ width:125px; right:7%; bottom:10%; opacity:.45; }
+    .hero-content{ max-width:100%; }
+    .hero-title{ max-width:80%; }
+    .profile-panel{ padding:22px; }
+    .profile-name{ font-size:22px; }
   }
 </style>
 </head>
@@ -408,9 +643,11 @@
       <ul class="nav-links">
         <li><a href="#" class="active">Início</a></li>
         <li><a href="#row-em-alta">Em alta</a></li>
+      <li><a href="#row-classicos">Clássicos</a></li>
         <li><a href="#row-classicos">Clássicos</a></li>
         <li><a href="#row-aventura">Aventura</a></li>
         <li><a href="#row-mais-curtidos">Mais curtidos</a></li>
+      <li><a href="#row-favoritos">Favoritos</a></li>
       </ul>
     </div>
     <div class="navbar-right">
@@ -418,15 +655,23 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b3b3b3" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input id="searchInput" type="text" placeholder="Buscar livro ou autor...">
       </div>
+      <button class="profile-btn" id="profileBtn"><span class="avatar">👤</span> Meu Bookflix</button>
     </div>
   </nav>
 
   <!-- HERO -->
   <header class="hero" id="hero">
+    <div class="hero-backdrop" id="heroBackdrop"></div>
     <div class="hero-gradient-side"></div>
     <div class="hero-gradient-bottom"></div>
+
+    <button class="hero-arrow hero-arrow-left" id="heroPrev" aria-label="Destaque anterior">‹</button>
+    <button class="hero-arrow hero-arrow-right" id="heroNext" aria-label="Próximo destaque">›</button>
+
+    <img class="hero-cover" id="heroCover" src="capas/pequeno-principe.png" alt="Capa do livro em destaque">
+
     <div class="hero-content">
-      <div class="hero-tag">Destaque da biblioteca</div>
+      <div class="hero-tag">👑 DESTAQUE DA SEMANA</div>
       <h1 class="hero-title" id="heroTitle">—</h1>
       <div class="hero-meta">
         <span class="stars" id="heroStars"></span>
@@ -442,15 +687,33 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
           Sinopse rápida
         </button>
+        <button class="btn btn-secondary" id="heroFavoriteBtn">♡ Favoritar</button>
       </div>
     </div>
+
+    <div class="hero-dots" id="heroDots" aria-label="Escolher destaque"></div>
   </header>
 
   <!-- ROWS (gerado via JS) -->
-  <main class="rows" id="rows"></main>
+  <main class="rows" id="rows">
+    <section class="row favorites-row" id="row-favoritos">
+      <h2 class="row-title">❤️ Favoritos dos alunos</h2>
+      <div class="row-track-wrap">
+        <button class="row-arrow left" aria-label="Anterior">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="row-track" id="favoritesTrack"></div>
+        <button class="row-arrow right" aria-label="Próximo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+      <div class="favorites-empty" id="favoritesEmpty">Você ainda não favoritou nenhum livro. Abra um livro e clique em ❤️.</div>
+    </section>
+  </main>
+  <div class="search-result-info" id="searchResultInfo"></div>
 
   <footer>
-    Bookflix — projeto de incentivo à leitura para bibliotecas escolares. As capas são carregadas da pasta /capas do projeto.
+    Bookflix — projeto de incentivo à leitura para bibliotecas escolares. ❤️ Favoritos, progresso e conquistas são salvos neste navegador.
   </footer>
 
   <!-- MODAL -->
@@ -479,12 +742,61 @@
               <span id="likeCount"></span> curtidas
             </button>
           </div>
+          <div class="reading-actions">
+            <button class="reading-btn" id="wantBtn">📖 Quero ler</button>
+            <button class="reading-btn" id="readBtn">✅ Marcar como lido</button>
+          </div>
+          <div class="reading-progress" id="readingProgress">
+            <label><span>Progresso de leitura</span><strong id="progressValue">0%</strong></label>
+            <input id="progressSlider" type="range" min="0" max="100" value="0">
+            <div class="progress-wrap"><div class="progress-bar" id="modalProgressBar"></div></div>
+          </div>
           <div class="modal-tags" id="modalTags"></div>
           <p class="modal-synopsis" id="modalSynopsis"></p>
           <div class="reviews-title">Avaliações de leitores</div>
           <div id="modalReviews"></div>
         </div>
       </div>
+    </div>
+  </div>
+
+
+  <!-- PERFIL DO LEITOR -->
+  <div class="profile-overlay" id="profileOverlay">
+    <div class="profile-panel">
+      <button class="profile-close" id="profileClose">×</button>
+      <div class="profile-head">
+        <div class="profile-avatar">👤</div>
+        <div>
+          <div class="profile-name">Meu Bookflix</div>
+          <div class="profile-sub">Sua jornada de leitura neste navegador</div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="profile-stat"><strong id="profileReadCount">0</strong><span>Livros lidos</span></div>
+        <div class="profile-stat"><strong id="profileWantCount">0</strong><span>Quero ler</span></div>
+        <div class="profile-stat"><strong id="profileFavCount">0</strong><span>Favoritos</span></div>
+        <div class="profile-stat"><strong id="profileProgressCount">0%</strong><span>Progresso médio</span></div>
+      </div>
+
+      <div class="profile-section-title">🏆 Meu nível</div>
+      <div class="profile-sub" id="profileLevelText">Comece sua jornada!</div>
+      <div class="progress-wrap" style="margin-top:10px"><div class="progress-bar" id="levelProgressBar"></div></div>
+
+      <div class="profile-section-title">🎖️ Conquistas</div>
+      <div class="badge-grid">
+        <div class="badge" data-badge="3"><div class="badge-icon">🥉</div><div class="badge-name">Leitor Iniciante<br>3 livros</div></div>
+        <div class="badge" data-badge="5"><div class="badge-icon">🥈</div><div class="badge-name">Leitor Curioso<br>5 livros</div></div>
+        <div class="badge" data-badge="10"><div class="badge-icon">🥇</div><div class="badge-name">Leitor Voraz<br>10 livros</div></div>
+        <div class="badge" data-badge="20"><div class="badge-icon">🚀</div><div class="badge-name">Explorador Literário<br>20 livros</div></div>
+      </div>
+
+      <div class="profile-section-title">📚 Livros que quero ler</div>
+      <div class="profile-list" id="wantList"></div>
+
+      <div class="profile-section-title">✅ Últimos livros lidos</div>
+      <div class="profile-list" id="readList"></div>
     </div>
   </div>
 
@@ -666,6 +978,121 @@ function renderCoverStyle(book){
   return `background: linear-gradient(155deg, ${c1}, ${c2}); color:#f2e9dc;`;
 }
 
+
+/* ---------- ESTADO DO LEITOR ---------- */
+const STORAGE_KEY = 'bookflix_reader_v2';
+let readerState;
+try {
+  readerState = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"favorites":[],"want":[],"read":[],"progress":{}}');
+  if(!readerState || !Array.isArray(readerState.favorites) || !Array.isArray(readerState.want) || !Array.isArray(readerState.read)) throw new Error('estado inválido');
+} catch(e) {
+  readerState = {favorites:[], want:[], read:[], progress:{}};
+}
+
+function saveState(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(readerState));
+  renderFavorites();
+  updateProfile();
+}
+
+function isFavorite(bookId){ return readerState.favorites.includes(bookId); }
+function isWant(bookId){ return readerState.want.includes(bookId); }
+function isRead(bookId){ return readerState.read.includes(bookId); }
+
+function toggleInList(list, id){
+  const i = list.indexOf(id);
+  if(i >= 0) list.splice(i,1);
+  else list.push(id);
+}
+
+function makeCard(book){
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.id = book.id;
+  card.innerHTML = `
+    <div class="card-cover">
+      <img class="book-cover-image" alt="Capa de ${book.title}">
+      <div class="cover-overlay"></div>
+      <div class="cover-fallback">
+        <div class="spine-title">${book.title}</div>
+        <div class="spine-author">${book.author}</div>
+      </div>
+    </div>
+    <div class="card-badge">
+      <span class="stars">${starString(book.rating)}</span>
+      <span>${book.likes}♥</span>
+    </div>
+  `;
+  const coverImg = card.querySelector('.book-cover-image');
+  const coverFallback = card.querySelector('.cover-fallback');
+  setCoverImage(coverImg, coverFallback, book);
+  card.addEventListener('click', ()=>openModal(book.id));
+  return card;
+}
+
+function renderFavorites(){
+  const track = document.getElementById('favoritesTrack');
+  const section = document.getElementById('row-favoritos');
+  const empty = document.getElementById('favoritesEmpty');
+  if(!track || !section) return;
+  track.innerHTML = '';
+  const favBooks = readerState.favorites.map(id=>books.find(b=>b.id===id)).filter(Boolean);
+  favBooks.forEach(book=>track.appendChild(makeCard(book)));
+  section.classList.toggle('has-books', favBooks.length > 0);
+  empty.style.display = favBooks.length ? 'none' : 'block';
+}
+
+function updateProfile(){
+  const readCount = readerState.read.length;
+  const wantCount = readerState.want.length;
+  const favCount = readerState.favorites.length;
+  const progressValues = Object.values(readerState.progress);
+  const avg = progressValues.length ? Math.round(progressValues.reduce((a,b)=>a+b,0)/progressValues.length) : 0;
+
+  document.getElementById('profileReadCount').textContent = readCount;
+  document.getElementById('profileWantCount').textContent = wantCount;
+  document.getElementById('profileFavCount').textContent = favCount;
+  document.getElementById('profileProgressCount').textContent = avg + '%';
+
+  let level = 'Comece sua jornada!';
+  let next = 3;
+  if(readCount >= 20){ level='🚀 Explorador Literário'; next=20; }
+  else if(readCount >= 10){ level='🥇 Leitor Voraz'; next=20; }
+  else if(readCount >= 5){ level='🥈 Leitor Curioso'; next=10; }
+  else if(readCount >= 3){ level='🥉 Leitor Iniciante'; next=5; }
+  const base = readCount >= 20 ? 20 : (readCount >= 10 ? 10 : readCount >= 5 ? 5 : readCount >= 3 ? 3 : 0);
+  const pct = next === base ? 100 : Math.min(100, Math.round(((readCount-base)/(next-base))*100));
+  document.getElementById('profileLevelText').textContent = level + (readCount < 20 ? ` — próximo nível em ${Math.max(0,next-readCount)} livro(s).` : ' — nível máximo!');
+  document.getElementById('levelProgressBar').style.width = pct + '%';
+
+  document.querySelectorAll('.badge').forEach(b=>{
+    b.classList.toggle('unlocked', readCount >= Number(b.dataset.badge));
+  });
+
+  const wantList = document.getElementById('wantList');
+  const readList = document.getElementById('readList');
+  const wantBooks = readerState.want.map(id=>books.find(b=>b.id===id)).filter(Boolean).slice(0,6);
+  const readBooks = readerState.read.map(id=>books.find(b=>b.id===id)).filter(Boolean).slice(-6).reverse();
+
+  wantList.innerHTML = wantBooks.length ? wantBooks.map(b=>`<div class="profile-book"><div><div class="profile-book-title">${b.title}</div><div class="profile-book-meta">${b.author}</div></div><span>📖</span></div>`).join('') : '<div class="profile-sub">Nenhum livro adicionado ainda.</div>';
+  readList.innerHTML = readBooks.length ? readBooks.map(b=>`<div class="profile-book"><div><div class="profile-book-title">${b.title}</div><div class="profile-book-meta">${b.author}</div></div><span>✅</span></div>`).join('') : '<div class="profile-sub">Você ainda não marcou livros como lidos.</div>';
+}
+
+function updateReadingButtons(book){
+  const wantBtn = document.getElementById('wantBtn');
+  const readBtn = document.getElementById('readBtn');
+  wantBtn.classList.toggle('active', isWant(book.id));
+  readBtn.classList.toggle('active', isRead(book.id));
+  wantBtn.textContent = isWant(book.id) ? '📖 Quero ler ✓' : '📖 Quero ler';
+  readBtn.textContent = isRead(book.id) ? '✅ Lido ✓' : '✅ Marcar como lido';
+
+  const progress = readerState.progress[book.id] || 0;
+  document.getElementById('progressSlider').value = progress;
+  document.getElementById('progressValue').textContent = progress + '%';
+  document.getElementById('modalProgressBar').style.width = progress + '%';
+  document.getElementById('readingProgress').classList.toggle('show', isWant(book.id) || progress > 0 || isRead(book.id));
+}
+
 /* ---------- render rows ---------- */
 const rowsEl = document.getElementById('rows');
 
@@ -686,32 +1113,7 @@ categories.forEach(cat=>{
     </div>
   `;
   const track = section.querySelector('.row-track');
-  cat.bookRefs.forEach(book=>{
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.dataset.id = book.id;
-    card.innerHTML = `
-      <div class="card-cover">
-        <img class="book-cover-image" alt="Capa de ${book.title}">
-        <div class="cover-overlay"></div>
-        <div class="cover-fallback">
-          <div class="spine-title">${book.title}</div>
-          <div class="spine-author">${book.author}</div>
-        </div>
-      </div>
-      <div class="card-badge">
-        <span class="stars">${starString(book.rating)}</span>
-        <span>${book.likes}♥</span>
-      </div>
-    `;
-
-    const coverImg = card.querySelector('.book-cover-image');
-    const coverFallback = card.querySelector('.cover-fallback');
-    setCoverImage(coverImg, coverFallback, book);
-
-    card.addEventListener('click', ()=>openModal(book.id));
-    track.appendChild(card);
-  });
+  cat.bookRefs.forEach(book=>track.appendChild(makeCard(book)));
 
   section.querySelector('.row-arrow.left').addEventListener('click', ()=>{
     track.scrollBy({ left: -track.clientWidth * 0.85, behavior:'smooth' });
@@ -723,18 +1125,106 @@ categories.forEach(cat=>{
   rowsEl.appendChild(section);
 });
 
-/* ---------- hero ---------- */
-const heroBook = books[1]; // O Pequeno Príncipe como destaque inicial
-document.getElementById('heroTitle').textContent = heroBook.title;
-document.getElementById('heroAuthor').textContent = heroBook.author;
-document.getElementById('heroStars').textContent = starString(heroBook.rating) + "  " + heroBook.rating.toFixed(1);
-document.getElementById('heroSynopsis').textContent = heroBook.synopsis;
-const [hc1,hc2] = paletteFor(heroBook.title);
-document.getElementById('hero').style.background =
-  `radial-gradient(circle at 75% 30%, ${hc1}, ${hc2} 60%, #141414 100%)`;
+/* ---------- destaques em carrossel ---------- */
+const featuredTitles = [
+  "O Pequeno Príncipe",
+  "1984",
+  "Harry Potter e a Pedra Filosofal",
+  "Extraordinário",
+  "A Menina que Roubava Livros"
+];
 
-document.getElementById('heroDetailsBtn').addEventListener('click', ()=>openModal(heroBook.id));
-document.getElementById('heroInfoBtn').addEventListener('click', ()=>openModal(heroBook.id));
+const featuredCovers = {
+  "O Pequeno Príncipe": "capas/pequeno-principe.png",
+  "1984": "capas/1984.png",
+  "Harry Potter e a Pedra Filosofal": "capas/Harry-Potter-e-a-pedra-filosofal.png",
+  "Extraordinário": "capas/extraordinario.png",
+  "A Menina que Roubava Livros": "capas/menina-que-roubava-livros.png"
+};
+
+const featuredBooks = featuredTitles
+  .map(title => books.find(b => b.title === title))
+  .filter(Boolean);
+
+let heroIndex = 0;
+let heroTimer = null;
+
+function renderHeroDots(){
+  const dots = document.getElementById('heroDots');
+  dots.innerHTML = '';
+  featuredBooks.forEach((book, i)=>{
+    const dot = document.createElement('button');
+    dot.className = 'hero-dot' + (i === heroIndex ? ' active' : '');
+    dot.setAttribute('aria-label', `Mostrar ${book.title}`);
+    dot.addEventListener('click', ()=>{
+      heroIndex = i;
+      renderHero();
+      restartHeroTimer();
+    });
+    dots.appendChild(dot);
+  });
+}
+
+function renderHero(){
+  const book = featuredBooks[heroIndex];
+  if(!book) return;
+
+  const [c1,c2] = paletteFor(book.title);
+  const hero = document.getElementById('hero');
+  hero.style.background = `linear-gradient(90deg, ${c2} 0%, ${c1} 32%, #141414 72%, #141414 100%)`;
+
+  const backdrop = document.getElementById('heroBackdrop');
+  const cover = featuredCovers[book.title];
+  backdrop.style.backgroundImage = `url("${cover}")`;
+  document.getElementById('heroCover').src = cover;
+  document.getElementById('heroCover').alt = `Capa de ${book.title}`;
+
+  document.getElementById('heroTitle').textContent = book.title;
+  document.getElementById('heroAuthor').textContent = book.author;
+  document.getElementById('heroStars').textContent = starString(book.rating) + "  " + book.rating.toFixed(1);
+  document.getElementById('heroSynopsis').textContent = book.synopsis;
+
+  const favBtn = document.getElementById('heroFavoriteBtn');
+  favBtn.textContent = isFavorite(book.id) ? '♥ Favoritado' : '♡ Favoritar';
+  favBtn.onclick = ()=>{
+    if(isFavorite(book.id)){
+      readerState.favorites = readerState.favorites.filter(id=>id !== book.id);
+      book.liked = false;
+    } else {
+      readerState.favorites.push(book.id);
+      book.liked = true;
+    }
+    saveState();
+    renderHero();
+  };
+
+  document.getElementById('heroDetailsBtn').onclick = ()=>openModal(book.id);
+  document.getElementById('heroInfoBtn').onclick = ()=>openModal(book.id);
+  renderHeroDots();
+}
+
+function restartHeroTimer(){
+  clearInterval(heroTimer);
+  heroTimer = setInterval(()=>{
+    heroIndex = (heroIndex + 1) % featuredBooks.length;
+    renderHero();
+  }, 7000);
+}
+
+document.getElementById('heroPrev').addEventListener('click', ()=>{
+  heroIndex = (heroIndex - 1 + featuredBooks.length) % featuredBooks.length;
+  renderHero();
+  restartHeroTimer();
+});
+
+document.getElementById('heroNext').addEventListener('click', ()=>{
+  heroIndex = (heroIndex + 1) % featuredBooks.length;
+  renderHero();
+  restartHeroTimer();
+});
+
+renderHero();
+restartHeroTimer();
 
 /* ---------- modal ---------- */
 const overlay = document.getElementById('modalOverlay');
@@ -759,13 +1249,52 @@ function openModal(bookId){
   document.getElementById('likeCount').textContent = book.likes;
 
   const likeBtn = document.getElementById('likeBtn');
-  likeBtn.classList.toggle('liked', book.liked);
+  likeBtn.classList.toggle('liked', isFavorite(book.id));
+  likeBtn.setAttribute('aria-label', isFavorite(book.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos');
   likeBtn.onclick = ()=>{
     book.liked = !book.liked;
     book.likes += book.liked ? 1 : -1;
+    if(book.liked) {
+      if(!isFavorite(book.id)) readerState.favorites.push(book.id);
+    } else {
+      readerState.favorites = readerState.favorites.filter(id=>id !== book.id);
+    }
     document.getElementById('likeCount').textContent = book.likes;
     likeBtn.classList.toggle('liked', book.liked);
+    saveState();
   };
+
+  // favoritos e status de leitura
+  const wantBtn = document.getElementById('wantBtn');
+  const readBtn = document.getElementById('readBtn');
+  wantBtn.onclick = ()=>{
+    toggleInList(readerState.want, book.id);
+    if(isWant(book.id)) readerState.read = readerState.read.filter(id=>id !== book.id);
+    saveState();
+    updateReadingButtons(book);
+  };
+  readBtn.onclick = ()=>{
+    if(!isRead(book.id)) {
+      readerState.read.push(book.id);
+      readerState.want = readerState.want.filter(id=>id !== book.id);
+      readerState.progress[book.id] = 100;
+    } else {
+      readerState.read = readerState.read.filter(id=>id !== book.id);
+    }
+    saveState();
+    updateReadingButtons(book);
+  };
+  document.getElementById('progressSlider').oninput = (e)=>{
+    const value = Number(e.target.value);
+    readerState.progress[book.id] = value;
+    if(value >= 100 && !isRead(book.id)) readerState.read.push(book.id);
+    if(value > 0 && value < 100 && !isWant(book.id)) readerState.want.push(book.id);
+    saveState();
+    document.getElementById('progressValue').textContent = value + '%';
+    document.getElementById('modalProgressBar').style.width = value + '%';
+    updateReadingButtons(book);
+  };
+  updateReadingButtons(book);
 
   document.getElementById('modalTags').innerHTML = book.tags.map(t=>`<span class="tag">${t}</span>`).join('');
 
@@ -796,6 +1325,19 @@ document.getElementById('modalClose').addEventListener('click', ()=> overlay.cla
 overlay.addEventListener('click', (e)=>{ if(e.target === overlay) overlay.classList.remove('open'); });
 document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') overlay.classList.remove('open'); });
 
+
+/* ---------- perfil ---------- */
+const profileOverlay = document.getElementById('profileOverlay');
+document.getElementById('profileBtn').addEventListener('click', ()=>{
+  updateProfile();
+  profileOverlay.classList.add('open');
+});
+document.getElementById('profileClose').addEventListener('click', ()=>profileOverlay.classList.remove('open'));
+profileOverlay.addEventListener('click', e=>{ if(e.target===profileOverlay) profileOverlay.classList.remove('open'); });
+
+renderFavorites();
+updateProfile();
+
 /* ---------- navbar scroll ---------- */
 window.addEventListener('scroll', ()=>{
   document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
@@ -804,11 +1346,21 @@ window.addEventListener('scroll', ()=>{
 /* ---------- busca simples ---------- */
 document.getElementById('searchInput').addEventListener('input', (e)=>{
   const q = e.target.value.trim().toLowerCase();
+  let found = 0;
   document.querySelectorAll('.card').forEach(card=>{
     const book = books.find(b=>b.id == card.dataset.id);
-    const match = !q || book.title.toLowerCase().includes(q) || book.author.toLowerCase().includes(q);
+    const haystack = [book.title, book.author, book.synopsis, ...(book.tags||[])].join(' ').toLowerCase();
+    const match = !q || haystack.includes(q);
     card.style.display = match ? 'flex' : 'none';
+    if(match && q) found++;
   });
+  const info = document.getElementById('searchResultInfo');
+  if(q){
+    info.textContent = found ? `🔎 ${found} resultado(s) encontrado(s) para “${e.target.value}”.` : `😕 Nenhum livro encontrado para “${e.target.value}”.`;
+    info.classList.add('show');
+  } else {
+    info.classList.remove('show');
+  }
 });
 </script>
 </body>
