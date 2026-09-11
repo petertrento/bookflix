@@ -502,7 +502,16 @@
    Se o arquivo tiver outro nome, informe-o no coverMap abaixo.
    ---------- */
 const coverMap = {
-  // "O Pequeno Príncipe": "minha-capa.jpg",
+  "Dom Casmurro": "dom-casmurro",
+  "O Pequeno Príncipe": "pequeno-principe",
+  "1984": "1984",
+  "Harry Potter e a Pedra Filosofal": "Harry-Potter-e-a-pedra-filosofal",
+  "Extraordinário": "extraordinario",
+  "Frankenstein": "Frankenstein",
+  "O Diário de Anne Frank": "o-diario-de-anne-frank",
+  "A Menina que Roubava Livros": "menina-que-roubava-livros",
+  "O Alquimista": "o-alquimista",
+  "Percy Jackson e o Ladrão de Raios": "o-ladrao-de-raios"
 };
 
 function slugify(str){
@@ -516,7 +525,7 @@ function slugify(str){
 
 function coverCandidates(book){
   const mapped = coverMap[book.title];
-  if(mapped) return ['capas/' + mapped];
+  if(mapped) return ['capas/' + mapped + '.jpg', 'capas/' + mapped + '.png', 'capas/' + mapped + '.jpeg', 'capas/' + mapped + '.webp'];
   const slug = slugify(book.title);
   return [
     'capas/' + slug + '.jpg',
