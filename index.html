@@ -817,42 +817,42 @@
    Se o arquivo tiver outro nome, informe-o no coverMap abaixo.
    ---------- */
 const coverMap = {
-  "Dom Casmurro": "dom-casmurro",
-  "O Pequeno Príncipe": "pequeno-principe",
-  "1984": "1984",
-  "Harry Potter e a Pedra Filosofal": "Harry-Potter-e-a-pedra-filosofal",
-  "Extraordinário": "extraordinario",
-  "Frankenstein": "Frankenstein",
-  "O Diário de Anne Frank": "o-diario-de-anne-frank",
-  "A Menina que Roubava Livros": "menina-que-roubava-livros",
-  "O Alquimista": "o-alquimista",
-  "Percy Jackson e o Ladrão de Raios": "o-ladrao-de-raios",
-  "Moby Dick": "Moby-Dick",
-  "O Morro dos Ventos Uivantes": "o-morro-dos-ventos-uivantes",
-  "O Hobbit": "o-hobbit",
-  "As Crônicas de Nárnia": "as-cronicas-de-narnia",
-  "A Revolução dos Bichos": "a-revolucao-dos-bichos",
-  "Dom Quixote": "dom-quixote",
-  "Orgulho e Preconceito": "orgulho-e-preconceito",
-  "Crime e Castigo": "crime-e-castigo",
-  "A Metamorfose": "a-metamorfose",
-  "Jogos Vorazes": "jogos-vorazes",
-  "A Ilha do Tesouro": "a-ilha-do-tesouro",
-  "Divergente": "divergente",
-  "Capitães da Areia": "capitaes-da-areia",
-  "Eragon": "eragon",
-  "O Pequeno Príncipe Preto": "o-pequeno-principe-preto",
-  "O Menino Maluquinho": "o-menino-maluquinho",
-  "A Árvore Generosa": "a-arvore-generosa",
-  "Marcelo, Marmelo, Martelo": "marcelo-marmelo-martelo",
-  "Malala, a menina que queria ir para a escola": "malala-a-menina-que-queria-ir-para-a-escola",
-  "Peter Pan": "peter-pan",
-  "Minecraft: Guia de Sobrevivência": "minecraft-guia-de-sobrevivencia",
-  "O Senhor dos Anéis": "o-senhor-dos-aneis",
-  "Os Últimos Jovens da Terra": "os-ultimos-jovens-da-terra",
-  "O Homem-Cão": "o-homem-cao",
-  "Academia Jedi": "academia-jedi",
-  "Diário de um Banana": "diario-de-um-banana"
+  "Dom Casmurro": "dom-casmurro.png",
+  "O Pequeno Príncipe": "pequeno-principe.png",
+  "1984": "1984.png",
+  "Harry Potter e a Pedra Filosofal": "Harry-Potter-e-a-pedra-filosofal.png",
+  "Extraordinário": "extraordinario.png",
+  "Frankenstein": "Frankenstein.png",
+  "O Diário de Anne Frank": "o-diario-de-anne-frank.png",
+  "A Menina que Roubava Livros": "menina-que-roubava-livros.png",
+  "O Alquimista": "o-alquimista.png",
+  "Percy Jackson e o Ladrão de Raios": "o-ladrao-de-raios.png",
+  "Moby Dick": "Moby-Dick.png",
+  "O Morro dos Ventos Uivantes": "o-morro-dos-ventos-uivantes.png",
+  "O Hobbit": "o-hobbit.png",
+  "As Crônicas de Nárnia": "as-cronicas-de-narnia.png",
+  "A Revolução dos Bichos": "a-revolucao-dos-bichos.png",
+  "Dom Quixote": "dom-quixote.png",
+  "Orgulho e Preconceito": "orgulho-e-preconceito.png",
+  "Crime e Castigo": "crime-e-castigo.png",
+  "A Metamorfose": "a-metamorfose.png",
+  "Jogos Vorazes": "jogos-vorazes.png",
+  "A Ilha do Tesouro": "a-ilha-do-tesouro.png",
+  "Divergente": "divergente.png",
+  "Capitães da Areia": "capitaes-da-areia.png",
+  "Eragon": "eragon.png",
+  "O Pequeno Príncipe Preto": "o-pequeno-principe-preto.png",
+  "O Menino Maluquinho": "o-menino-maluquinho.png",
+  "A Árvore Generosa": "a-arvore-generosa.png",
+  "Marcelo, Marmelo, Martelo": "marcelo-marmelo-martelo.png",
+  "Malala, a menina que queria ir para a escola": "malala-a-menina-que-queria-ir-para-a-escola.png",
+  "Peter Pan": "peter-pan.png",
+  "Minecraft: Guia de Sobrevivência": "minecraft-guia-de-sobrevivencia.png",
+  "O Senhor dos Anéis": "o-senhor-dos-aneis.png",
+  "Os Últimos Jovens da Terra": "os-ultimos-jovens-da-terra.png",
+  "O Homem-Cão": "o-homem-cao.png",
+  "Academia Jedi": "academia-jedi.png",
+  "Diário de um Banana": "diario-de-um-banana.png"
 };
 
 function slugify(str){
@@ -862,6 +862,51 @@ function slugify(str){
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
+}
+
+function coverCandidates(book){
+  const filename = coverMap[book.title];
+  if(filename){
+    // Primeiro tenta a capa diretamente da pasta do GitHub Pages.
+    // Em seguida usa o raw.githubusercontent como plano B.
+    return [
+      './capas/' + filename,
+      'capas/' + filename,
+      'https://raw.githubusercontent.com/petertrento/bookflix/main/capas/' + encodeURIComponent(filename)
+    ];
+  }
+
+  const slug = slugify(book.title);
+  return [
+    './capas/' + slug + '.png',
+    './capas/' + slug + '.jpg',
+    './capas/' + slug + '.jpeg',
+    './capas/' + slug + '.webp'
+  ];
+}
+
+function setCoverImage(img, fallback, book){
+  const candidates = coverCandidates(book);
+  let index = 0;
+  fallback.style.display = 'none';
+  img.style.display = 'block';
+
+  function tryNext(){
+    if(index >= candidates.length){
+      img.style.display = 'none';
+      fallback.style.display = 'flex';
+      fallback.style.cssText += ';' + renderCoverStyle(book);
+      return;
+    }
+    img.src = candidates[index++];
+  }
+
+  img.onerror = tryNext;
+  img.onload = () => {
+    img.style.display = 'block';
+    fallback.style.display = 'none';
+  };
+  tryNext();
 }
 
 function coverCandidates(book){
