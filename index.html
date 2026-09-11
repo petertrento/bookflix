@@ -828,7 +828,7 @@ const coverMap = {
   "O Alquimista": "o-alquimista",
   "Percy Jackson e o Ladrão de Raios": "o-ladrao-de-raios",
   "Moby Dick": "Moby-Dick",
-  "O Morro dos Ventos Uivantes": "monte-dos-ventos-uivantes",
+  "O Morro dos Ventos Uivantes": "o-morro-dos-ventos-uivantes",
   "O Hobbit": "o-hobbit",
   "As Crônicas de Nárnia": "as-cronicas-de-narnia",
   "A Revolução dos Bichos": "a-revolucao-dos-bichos",
@@ -868,12 +868,6 @@ function coverCandidates(book){
   const mapped = coverMap[book.title];
   if(mapped){
     const candidates = ['capas/' + mapped + '.jpg', 'capas/' + mapped + '.png', 'capas/' + mapped + '.jpeg', 'capas/' + mapped + '.webp'];
-    if(book.title === "Malala, a menina que queria ir para a escola"){
-      candidates.push(
-        'capas/malala-a-menina-que-queria-ir-para-a-escola.jpg',
-        'capas/malala-a-menina-que-queria-ir-para-a-escola.png'
-      );
-    }
     return [...new Set(candidates)];
   }
   const slug = slugify(book.title);
