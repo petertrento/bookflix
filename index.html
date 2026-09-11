@@ -647,6 +647,7 @@
         <li><a href="#row-classicos">Clássicos</a></li>
         <li><a href="#row-aventura">Aventura</a></li>
         <li><a href="#row-mais-curtidos">Mais curtidos</a></li>
+      <li><a href="#row-infantis">Infantojuvenil</a></li>
       <li><a href="#row-favoritos">Favoritos</a></li>
       </ul>
     </div>
@@ -825,7 +826,33 @@ const coverMap = {
   "O Diário de Anne Frank": "o-diario-de-anne-frank",
   "A Menina que Roubava Livros": "menina-que-roubava-livros",
   "O Alquimista": "o-alquimista",
-  "Percy Jackson e o Ladrão de Raios": "o-ladrao-de-raios"
+  "Percy Jackson e o Ladrão de Raios": "o-ladrao-de-raios",
+  "Moby Dick": "Moby-Dick",
+  "O Morro dos Ventos Uivantes": "monte-dos-ventos-uivantes",
+  "O Hobbit": "o-hobbit",
+  "As Crônicas de Nárnia": "as-cronicas-de-narnia",
+  "A Revolução dos Bichos": "a-revolucao-dos-bichos",
+  "Dom Quixote": "dom-quixote",
+  "Orgulho e Preconceito": "orgulho-e-preconceito",
+  "Crime e Castigo": "crime-e-castigo",
+  "A Metamorfose": "a-metamorfose",
+  "Jogos Vorazes": "jogos-vorazes",
+  "A Ilha do Tesouro": "a-ilha-do-tesouro",
+  "Divergente": "divergente",
+  "Capitães da Areia": "capitaes-da-areia",
+  "Eragon": "eragon",
+  "O Pequeno Príncipe Preto": "o-pequeno-principe-preto",
+  "O Menino Maluquinho": "o-menino-maluquinho",
+  "A Árvore Generosa": "a-arvore-generosa",
+  "Marcelo, Marmelo, Martelo": "marcelo-marmelo-martelo",
+  "Malala, a menina que queria ir para a escola": "malala-a-menina-que-queria-ir-para-a-escola",
+  "Peter Pan": "peter-pan",
+  "Minecraft: Guia de Sobrevivência": "minecraft-guia-de-sobrevivencia",
+  "O Senhor dos Anéis": "o-senhor-dos-aneis",
+  "Os Últimos Jovens da Terra": "os-ultimos-jovens-da-terra",
+  "O Homem-Cão": "o-homem-cao",
+  "Academia Jedi": "academia-jedi",
+  "Diário de um Banana": "diario-de-um-banana"
 };
 
 function slugify(str){
@@ -839,7 +866,16 @@ function slugify(str){
 
 function coverCandidates(book){
   const mapped = coverMap[book.title];
-  if(mapped) return ['capas/' + mapped + '.jpg', 'capas/' + mapped + '.png', 'capas/' + mapped + '.jpeg', 'capas/' + mapped + '.webp'];
+  if(mapped){
+    const candidates = ['capas/' + mapped + '.jpg', 'capas/' + mapped + '.png', 'capas/' + mapped + '.jpeg', 'capas/' + mapped + '.webp'];
+    if(book.title === "Malala, a menina que queria ir para a escola"){
+      candidates.push(
+        'capas/malala-a-menina-que-queria-ir-para-a-escola.jpg',
+        'capas/malala-a-menina-que-queria-ir-para-a-escola.png'
+      );
+    }
+    return [...new Set(candidates)];
+  }
   const slug = slugify(book.title);
   return [
     'capas/' + slug + '.jpg',
@@ -936,6 +972,24 @@ const categories = [
       ["Divergente","Veronica Roth","Em uma sociedade dividida em facções, Tris descobre que não se encaixa em nenhuma delas — o que a torna perigosa.",4.4,301,["Distopia","Aventura"]],
       ["Capitães da Areia","Jorge Amado","Um grupo de meninos abandonados vive de pequenos furtos nas ruas de Salvador, unidos por lealdade e sonhos de liberdade.",4.5,264,["Clássico","Drama"]],
       ["Eragon","Christopher Paolini","Um jovem fazendeiro encontra o ovo de um dragão e se torna o último Cavaleiro dos Dragões.",4.2,177,["Fantasia","Aventura"]],
+    ]
+  },
+  {
+    id: "row-infantis",
+    title: "Novidades para leitores jovens",
+    books: [
+      ["O Pequeno Príncipe Preto","Rodrigo França","Em um pequeno planeta, um menino viaja por diferentes mundos espalhando amor e empatia, em uma história sobre identidade, ancestralidade e valorização de quem somos.",4.8,245,["Infantojuvenil","Identidade"]],
+      ["O Menino Maluquinho","Ziraldo","Um menino brincalhão, criativo e cheio de energia transforma situações do cotidiano em aventuras e descobre a alegria de ser quem é.",4.8,330,["Infantil","Humor"]],
+      ["A Árvore Generosa","Shel Silverstein","Um menino e uma árvore constroem uma relação de afeto e generosidade que atravessa diferentes fases da vida, convidando o leitor a refletir sobre cuidado e amizade.",4.7,285,["Infantil","Emoção"]],
+      ["Marcelo, Marmelo, Martelo","Ruth Rocha","Marcelo decide reinventar os nomes das coisas e cria uma linguagem própria, descobrindo o poder da curiosidade, das palavras e da imaginação.",4.9,410,["Infantil","Humor"]],
+      ["Malala, a menina que queria ir para a escola","Adriana Carranca","A história real de Malala Yousafzai e de sua luta pelo direito de meninas estudarem, apresentada aos jovens leitores com contexto sobre sua vida e seu país.",4.8,275,["Biografia","Educação"]],
+      ["Peter Pan","J. M. Barrie","Peter Pan leva Wendy e seus irmãos para a Terra do Nunca, onde vivem aventuras com fadas, piratas e outros personagens que desafiam a ideia de crescer.",4.6,260,["Fantasia","Aventura"]],
+      ["Minecraft: Guia de Sobrevivência","Mojang","Um guia para conhecer os primeiros passos de sobrevivência no universo de Minecraft, explorando recursos, perigos, criação de ferramentas e estratégias.",4.5,295,["Games","Aventura"]],
+      ["O Senhor dos Anéis","J. R. R. Tolkien","Frodo recebe a missão de levar um poderoso anel até Mordor para destruí-lo, iniciando uma jornada épica ao lado de companheiros contra forças sombrias.",4.9,520,["Fantasia","Aventura"]],
+      ["Os Últimos Jovens da Terra","Max Brallier","Depois que monstros e zumbis tomam conta do mundo, Jack e seus amigos precisam sobreviver, inventar soluções e enfrentar o apocalipse juntos.",4.7,315,["Aventura","Humor"]],
+      ["O Homem-Cão","Dav Pilkey","Depois de um acidente, a cabeça de um cão é unida ao corpo de um policial e nasce um herói improvável que precisa enfrentar o vilão Pepê.",4.8,390,["Infantil","Humor"]],
+      ["Academia Jedi","Jeffrey Brown","Um jovem estudante entra em uma academia inspirada no universo de Star Wars e enfrenta desafios, amizades e situações divertidas enquanto aprende a ser um Jedi.",4.6,230,["Aventura","Humor"]],
+      ["Diário de um Banana","Jeff Kinney","Greg Heffley registra suas confusões, inseguranças e tentativas de sobreviver à escola e à vida familiar em um diário cheio de humor.",4.8,445,["Infantojuvenil","Humor"]]
     ]
   },
   {
