@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bookflix — Descubra sua próxima leitura</title>
+<style>
+  :root{
+    --bg: #141414;
+    --bg-elevated: #1f1f1f;
+    --bg-card: #262626;
+    --red: #e50914;
+    --red-dark: #b0060f;
+    --text: #ffffff;
+    --text-dim: #b3b3b3;
+    --text-faint: #808080;
+    --radius: 4px;
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  a{ color: inherit; text-decoration: none; }
+  button{ font-family: inherit; cursor: pointer; border: none; }
+
+  /* ---------- NAVBAR ---------- */
+  .navbar{
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 4%;
+    transition: background .3s ease;
+  }
+  .navbar.scrolled{
+    background: var(--bg);
+    box-shadow: 0 2px 10px rgba(0,0,0,.5);
+  }
+  .navbar-left{ display:flex; align-items:center; gap: 32px; }
+  .logo{
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--red);
+    letter-spacing: -1px;
+    text-transform: uppercase;
+  }
+  .nav-links{ display:flex; gap: 20px; list-style:none; }
+  .nav-links li a{
+    font-size: 14px;
+    color: var(--text-dim);
+    transition: color .2s;
+  }
+  .nav-links li a:hover, .nav-links li a.active{ color: var(--text); }
+  .nav-links li a.active{ font-weight: 700; }
+
+  .navbar-right{ display:flex; align-items:center; gap: 18px; }
+  .search-box{
+    display:flex; align-items:center;
+    background: rgba(0,0,0,.6);
+    border: 1px solid #555;
+    border-radius: 2px;
+    padding: 6px 10px;
+    gap: 6px;
+  }
+  .search-box input{
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-size: 13px;
+    width: 140px;
+  }
+  .search-box svg{ flex-shrink:0; }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position: relative;
+    height: 88vh;
+    min-height: 500px;
+    display: flex;
+    align-items: flex-end;
+    padding: 0 4% 8%;
+    background-size: cover;
+    background-position: center 20%;
+  }
+  .hero-gradient-bottom{
+    position:absolute; inset:0;
+    background: linear-gradient(180deg, rgba(20,20,20,0) 45%, var(--bg) 100%);
+  }
+  .hero-gradient-side{
+    position:absolute; inset:0;
+    background: linear-gradient(90deg, rgba(20,20,20,.9) 0%, rgba(20,20,20,.2) 55%, transparent 80%);
+  }
+  .hero-content{ position: relative; max-width: 560px; }
+  .hero-tag{
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    letter-spacing: .5px;
+  }
+  .hero-title{
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 800;
+    line-height: 1.05;
+    margin-bottom: 16px;
+    text-shadow: 2px 2px 6px rgba(0,0,0,.6);
+  }
+  .hero-meta{
+    display:flex; align-items:center; gap:14px;
+    margin-bottom: 14px;
+    font-size: 14px;
+    color: #46d369;
+    font-weight: 700;
+  }
+  .hero-meta .stars{ color: #ffd700; letter-spacing: 1px; }
+  .hero-synopsis{
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text);
+    margin-bottom: 22px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 520px;
+  }
+  .hero-buttons{ display:flex; gap: 12px; }
+  .btn{
+    display:flex; align-items:center; gap:8px;
+    padding: 11px 24px;
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 700;
+    transition: opacity .2s, background .2s;
+  }
+  .btn-primary{ background: var(--text); color: #000; }
+  .btn-primary:hover{ opacity: .8; }
+  .btn-secondary{ background: rgba(109,109,110,.5); color: var(--text); }
+  .btn-secondary:hover{ background: rgba(109,109,110,.75); }
+
+  /* ---------- ROWS / CARROSSEL ---------- */
+  .rows{ position: relative; z-index: 5; margin-top: -60px; padding-bottom: 60px; }
+  .row{ margin-bottom: 40px; }
+  .row-title{
+    font-size: 19px;
+    font-weight: 700;
+    padding: 0 4%;
+    margin-bottom: 10px;
+  }
+  .row-track-wrap{ position: relative; }
+  .row-arrow{
+    position:absolute; top:0; bottom:0;
+    width: 4%;
+    min-width: 40px;
+    background: rgba(20,20,20,.55);
+    display:flex; align-items:center; justify-content:center;
+    z-index: 20;
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .row-track-wrap:hover .row-arrow{ opacity: 1; }
+  .row-arrow:hover{ background: rgba(20,20,20,.8); }
+  .row-arrow.left{ left:0; }
+  .row-arrow.right{ right:0; }
+  .row-arrow svg{ width: 28px; height: 28px; }
+
+  .row-track{
+    display:flex;
+    gap: 6px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 4px 4%;
+    scrollbar-width: none;
+  }
+  .row-track::-webkit-scrollbar{ display:none; }
+
+  .card{
+    position: relative;
+    flex: 0 0 auto;
+    width: 168px;
+    aspect-ratio: 2 / 3;
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform .25s ease, z-index 0s;
+    display:flex;
+    align-items:flex-end;
+  }
+  .card:hover{ transform: scale(1.08); z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,.6); }
+
+  .card-cover{
+    position:absolute; inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding: 0;
+    text-align:center;
+    background: #262626;
+  }
+
+  .card-cover img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    position:relative;
+    z-index:0;
+  }
+
+  .card-cover .cover-overlay{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    background:linear-gradient(
+      180deg,
+      rgba(0,0,0,0) 35%,
+      rgba(0,0,0,.15) 55%,
+      rgba(0,0,0,.82) 100%
+    );
+    opacity:.35;
+    transition:opacity .25s ease;
+  }
+
+  .card:hover .card-cover .cover-overlay{
+    opacity:.85;
+  }
+
+  .card-cover .cover-fallback{
+    position:absolute;
+    inset:0;
+    z-index:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:14px;
+    text-align:center;
+  }
+  .card-cover .spine-title{
+    font-weight: 800;
+    font-size: 16px;
+    line-height: 1.15;
+    text-shadow: 0 1px 3px rgba(0,0,0,.4);
+  }
+  .card-cover .spine-author{
+    margin-top: 8px;
+    font-size: 11px;
+    opacity: .85;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .card-badge{
+    position:absolute; bottom:8px; left:8px; right:8px;
+    display:flex; align-items:center; justify-content:space-between;
+    font-size: 11px;
+    background: rgba(0,0,0,.55);
+    border-radius: 3px;
+    padding: 3px 6px;
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .card:hover .card-badge{ opacity: 1; }
+  .card-badge .stars{ color:#ffd700; }
+
+  /* ---------- MODAL ---------- */
+  .modal-overlay{
+    position: fixed; inset:0;
+    background: rgba(0,0,0,.75);
+    display:none;
+    align-items:center; justify-content:center;
+    z-index: 200;
+    padding: 20px;
+  }
+  .modal-overlay.open{ display:flex; }
+  .modal{
+    background: var(--bg-elevated);
+    max-width: 780px;
+    width: 100%;
+    max-height: 88vh;
+    overflow-y: auto;
+    border-radius: 8px;
+    position: relative;
+  }
+  .modal-close{
+    position:absolute; top:16px; right:16px;
+    width: 36px; height:36px;
+    border-radius: 50%;
+    background: rgba(20,20,20,.7);
+    display:flex; align-items:center; justify-content:center;
+    z-index: 5;
+  }
+  .modal-close:hover{ background: rgba(20,20,20,.95); }
+  .modal-banner{
+    height: 160px;
+    position: relative;
+    display:flex; align-items:flex-end;
+    padding: 20px 32px;
+  }
+  .modal-banner::after{
+    content:"";
+    position:absolute; inset:0;
+    background: linear-gradient(180deg, rgba(0,0,0,.1), var(--bg-elevated) 95%);
+  }
+  .modal-banner-title{
+    position: relative;
+    font-size: 26px;
+    font-weight: 800;
+    z-index: 1;
+  }
+  .modal-body{ padding: 0 32px 32px; display:flex; gap: 24px; }
+  .modal-cover{
+    flex: 0 0 150px;
+    aspect-ratio: 2/3;
+    border-radius: var(--radius);
+    overflow:hidden;
+    margin-top: -50px;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 8px 24px rgba(0,0,0,.5);
+    background:#262626;
+  }
+  .modal-cover img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .modal-cover .modal-cover-fallback{
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:14px;
+    text-align:center;
+  }
+  .modal-cover .spine-title{ font-weight:800; font-size:15px; line-height:1.15; }
+  .modal-cover .spine-author{ margin-top:6px; font-size:10px; text-transform:uppercase; opacity:.85; }
+  .modal-info{ flex:1; padding-top: 14px; }
+  .modal-author{ color: var(--text-dim); margin-bottom: 10px; font-size: 14px;}
+  .modal-stats{ display:flex; gap:20px; align-items:center; margin-bottom: 16px; flex-wrap: wrap;}
+  .modal-stat{ display:flex; align-items:center; gap:6px; font-size:14px; color: var(--text-dim);}
+  .modal-stat .stars{ color:#ffd700; letter-spacing:1px; }
+  .like-btn{
+    display:flex; align-items:center; gap:6px;
+    background: var(--bg-card);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    transition: background .2s;
+  }
+  .like-btn:hover{ background: #333; }
+  .like-btn.liked{ color: var(--red); }
+  .like-btn svg{ width:16px; height:16px; }
+  .modal-synopsis{ font-size:15px; line-height:1.6; color: var(--text); margin-bottom: 20px; }
+  .modal-tags{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom: 20px;}
+  .tag{
+    font-size:12px; color: var(--text-dim);
+    border: 1px solid #444; padding: 4px 10px; border-radius: 20px;
+  }
+  .reviews-title{ font-size:15px; font-weight:700; margin-bottom:12px; }
+  .review{ border-top: 1px solid #333; padding: 12px 0; }
+  .review-head{ display:flex; justify-content:space-between; margin-bottom:4px; }
+  .review-user{ font-weight:600; font-size:13px; }
+  .review-stars{ color:#ffd700; font-size:12px; }
+  .review-text{ font-size:13px; color: var(--text-dim); line-height:1.5; }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    padding: 40px 4% 60px;
+    color: var(--text-faint);
+    font-size: 13px;
+    border-top: 1px solid #2a2a2a;
+  }
+
+  @media (max-width: 700px){
+    .nav-links{ display:none; }
+    .card{ width: 122px; }
+    .modal-body{ flex-direction: column; }
+    .modal-cover{ margin-top: -40px; flex: 0 0 130px; width: 130px; }
+    .hero{ height: 70vh; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-left">
+      <div class="logo">BOOKFLIX</div>
+      <ul class="nav-links">
+        <li><a href="#" class="active">Início</a></li>
+        <li><a href="#row-em-alta">Em alta</a></li>
+        <li><a href="#row-classicos">Clássicos</a></li>
+        <li><a href="#row-aventura">Aventura</a></li>
+        <li><a href="#row-mais-curtidos">Mais curtidos</a></li>
+      </ul>
+    </div>
+    <div class="navbar-right">
+      <div class="search-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b3b3b3" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="searchInput" type="text" placeholder="Buscar livro ou autor...">
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero" id="hero">
+    <div class="hero-gradient-side"></div>
+    <div class="hero-gradient-bottom"></div>
+    <div class="hero-content">
+      <div class="hero-tag">Destaque da biblioteca</div>
+      <h1 class="hero-title" id="heroTitle">—</h1>
+      <div class="hero-meta">
+        <span class="stars" id="heroStars"></span>
+        <span id="heroAuthor"></span>
+      </div>
+      <p class="hero-synopsis" id="heroSynopsis"></p>
+      <div class="hero-buttons">
+        <button class="btn btn-primary" id="heroDetailsBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          Ver detalhes
+        </button>
+        <button class="btn btn-secondary" id="heroInfoBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Sinopse rápida
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ROWS (gerado via JS) -->
+  <main class="rows" id="rows"></main>
+
+  <footer>
+    Bookflix — projeto de incentivo à leitura para bibliotecas escolares. As capas são carregadas da pasta /capas do projeto.
+  </footer>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modal">
+      <button class="modal-close" id="modalClose">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="modal-banner" id="modalBanner">
+        <div class="modal-banner-title" id="modalBannerTitle"></div>
+      </div>
+      <div class="modal-body">
+        <div class="modal-cover" id="modalCover">
+          <img id="modalCoverImage" src="" alt="">
+          <div class="modal-cover-fallback" id="modalCoverFallback">
+            <div class="spine-title" id="modalCoverTitle"></div>
+            <div class="spine-author" id="modalCoverAuthor"></div>
+          </div>
+        </div>
+        <div class="modal-info">
+          <div class="modal-author" id="modalAuthor"></div>
+          <div class="modal-stats">
+            <div class="modal-stat"><span class="stars" id="modalStars"></span><span id="modalRatingNum"></span></div>
+            <button class="like-btn" id="likeBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+              <span id="likeCount"></span> curtidas
+            </button>
+          </div>
+          <div class="modal-tags" id="modalTags"></div>
+          <p class="modal-synopsis" id="modalSynopsis"></p>
+          <div class="reviews-title">Avaliações de leitores</div>
+          <div id="modalReviews"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* =========================================================
+   BOOKFLIX — dados de exemplo
+   Para trocar por capas reais, adicione "cover: 'caminho/da/imagem.jpg'"
+   em cada livro e ajuste renderCoverContent() para usar <img>.
+   ========================================================= */
+/* ---------- CAPAS DOS LIVROS ----------
+   Coloque as imagens na pasta /capas do projeto.
+   O sistema procura automaticamente por:
+   capas/nome-do-livro.jpg, .png, .jpeg ou .webp
+
+   Exemplo: O Pequeno Príncipe -> capas/o-pequeno-principe.jpg
+
+   Se o arquivo tiver outro nome, informe-o no coverMap abaixo.
+   ---------- */
+const coverMap = {
+  // "O Pequeno Príncipe": "minha-capa.jpg",
+};
+
+function slugify(str){
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function coverCandidates(book){
+  const mapped = coverMap[book.title];
+  if(mapped) return ['capas/' + mapped];
+  const slug = slugify(book.title);
+  return [
+    'capas/' + slug + '.jpg',
+    'capas/' + slug + '.png',
+    'capas/' + slug + '.jpeg',
+    'capas/' + slug + '.webp'
+  ];
+}
+
+function setCoverImage(img, fallback, book){
+  const candidates = coverCandidates(book);
+  let index = 0;
+  fallback.style.display = 'none';
+  img.style.display = 'block';
+
+  function tryNext(){
+    if(index >= candidates.length){
+      img.style.display = 'none';
+      fallback.style.display = 'flex';
+      fallback.style.cssText += ';' + renderCoverStyle(book);
+      return;
+    }
+    img.src = candidates[index++];
+  }
+
+  img.onerror = tryNext;
+  img.onload = () => {
+    img.style.display = 'block';
+    fallback.style.display = 'none';
+  };
+  tryNext();
+}
+
+const palettes = [
+  ['#7b2d26','#3a1210'], ['#1f3a5f','#0d1b2e'], ['#3d2b56','#1a1030'],
+  ['#0f5132','#08331f'], ['#7a4b19','#3d2409'], ['#5f1f3a','#2e0e1c'],
+  ['#1f5f5a','#0d2e2b'], ['#5f4b1f','#2e230d'], ['#2b3a5f','#131a2e'],
+  ['#5f1f1f','#2e0d0d']
+];
+
+function paletteFor(str){
+  let hash = 0;
+  for(let i=0;i<str.length;i++) hash = str.charCodeAt(i) + ((hash<<5)-hash);
+  return palettes[Math.abs(hash) % palettes.length];
+}
+
+const reviewPool = [
+  "Não consegui parar de ler, recomendo muito!",
+  "Uma história marcante, mudou minha forma de ver o assunto.",
+  "Achei o ritmo um pouco lento no começo, mas vale a pena.",
+  "Perfeito para quem está começando a se interessar por leitura.",
+  "Reli mais de uma vez, é daqueles livros que ficam na memória.",
+  "Indiquei para toda a turma, todo mundo amou."
+];
+
+const categories = [
+  {
+    id: "row-em-alta",
+    title: "Em alta na biblioteca",
+    books: [
+      ["Dom Casmurro","Machado de Assis","Bentinho narra, décadas depois, sua obsessão pela dúvida sobre a fidelidade de Capitu, em um dos maiores romances da literatura brasileira.",4.6,312,["Clássico","Romance"]],
+      ["O Pequeno Príncipe","Antoine de Saint-Exupéry","Um piloto perdido no deserto encontra um pequeno príncipe vindo de outro planeta, que lhe ensina sobre amor, perda e o que realmente importa na vida.",4.8,540,["Fábula","Infantojuvenil"]],
+      ["1984","George Orwell","Em um regime totalitário que vigia cada pensamento, Winston Smith arrisca tudo para pensar por conta própria e amar livremente.",4.7,489,["Distopia","Ficção científica"]],
+      ["O Diário de Anne Frank","Anne Frank","O relato real de uma adolescente escondida durante a Segunda Guerra Mundial, sobre esperança, medo e a vontade de viver.",4.7,401,["Biografia","História"]],
+      ["Extraordinário","R. J. Palacio","Auggie tem uma diferença facial rara e enfrenta seu primeiro ano na escola comum, ensinando a todos sobre bondade e aceitação.",4.9,362,["Infantojuvenil","Drama"]],
+      ["A Menina que Roubava Livros","Markus Zusak","Narrado pela Morte, o livro acompanha Liesel, que encontra consolo nos livros durante a Alemanha nazista.",4.8,298,["História","Drama"]],
+      ["O Alquimista","Paulo Coelho","O pastor Santiago viaja em busca de um tesouro e descobre que a verdadeira jornada é sobre encontrar seu propósito.",4.3,275,["Ficção","Filosofia"]],
+      ["Percy Jackson e o Ladrão de Raios","Rick Riordan","Um garoto descobre ser filho de um deus grego e precisa impedir uma guerra entre os deuses do Olimpo.",4.6,410,["Aventura","Fantasia"]],
+    ]
+  },
+  {
+    id: "row-classicos",
+    title: "Clássicos que todo mundo deveria ler",
+    books: [
+      ["Dom Quixote","Miguel de Cervantes","Um fidalgo enlouquecido por romances de cavalaria sai em busca de aventuras, ao lado de seu fiel escudeiro Sancho Pança.",4.4,198,["Clássico","Aventura"]],
+      ["Orgulho e Preconceito","Jane Austen","Elizabeth Bennet enfrenta preconceitos de classe e primeiras impressões enganosas em seu caminho até o amor.",4.6,340,["Romance","Clássico"]],
+      ["Moby Dick","Herman Melville","O capitão Ahab persegue obsessivamente a baleia branca que lhe tirou a perna, em uma jornada sobre vingança e obsessão.",4.1,120,["Aventura","Clássico"]],
+      ["Crime e Castigo","Fiódor Dostoiévski","Um estudante pobre comete um assassinato e mergulha em um turbilhão de culpa e redenção nas ruas de São Petersburgo.",4.5,205,["Clássico","Drama"]],
+      ["A Revolução dos Bichos","George Orwell","Os animais de uma fazenda expulsam os humanos e tentam construir uma sociedade igualitária — até que o poder corrompe.",4.6,378,["Fábula","Sátira política"]],
+      ["Frankenstein","Mary Shelley","Um cientista cria vida a partir de partes de cadáveres e precisa lidar com as consequências de brincar de Deus.",4.3,215,["Terror","Clássico"]],
+      ["O Morro dos Ventos Uivantes","Emily Brontë","Uma paixão intensa e destrutiva entre Catherine e Heathcliff atravessa gerações nos pântanos ingleses.",4.0,150,["Romance","Clássico"]],
+      ["A Metamorfose","Franz Kafka","Gregor Samsa acorda transformado em um inseto gigante e precisa encarar o estranhamento da própria família.",4.4,289,["Clássico","Ficção"]],
+    ]
+  },
+  {
+    id: "row-aventura",
+    title: "Aventura e fantasia",
+    books: [
+      ["Harry Potter e a Pedra Filosofal","J. K. Rowling","Um garoto órfão descobre, ao completar 11 anos, que é um bruxo e é convidado a estudar em Hogwarts.",4.9,612,["Fantasia","Aventura"]],
+      ["O Hobbit","J. R. R. Tolkien","Bilbo Bolseiro é arrastado para uma jornada inesperada ao lado de anões e um mago, em busca de um tesouro guardado por um dragão.",4.7,455,["Fantasia","Aventura"]],
+      ["As Crônicas de Nárnia","C. S. Lewis","Quatro irmãos atravessam um guarda-roupa mágico e chegam a um mundo onde animais falam e o bem enfrenta o mal.",4.6,388,["Fantasia","Infantojuvenil"]],
+      ["Jogos Vorazes","Suzanne Collins","Katniss se voluntaria para um torneio mortal em um futuro distópico, onde apenas um participante pode sobreviver.",4.7,470,["Distopia","Aventura"]],
+      ["A Ilha do Tesouro","Robert Louis Stevenson","Um jovem encontra um mapa de tesouro e embarca em uma perigosa viagem ao lado de piratas.",4.3,190,["Aventura","Clássico"]],
+      ["Divergente","Veronica Roth","Em uma sociedade dividida em facções, Tris descobre que não se encaixa em nenhuma delas — o que a torna perigosa.",4.4,301,["Distopia","Aventura"]],
+      ["Capitães da Areia","Jorge Amado","Um grupo de meninos abandonados vive de pequenos furtos nas ruas de Salvador, unidos por lealdade e sonhos de liberdade.",4.5,264,["Clássico","Drama"]],
+      ["Eragon","Christopher Paolini","Um jovem fazendeiro encontra o ovo de um dragão e se torna o último Cavaleiro dos Dragões.",4.2,177,["Fantasia","Aventura"]],
+    ]
+  },
+  {
+    id: "row-mais-curtidos",
+    title: "Mais curtidos pelos leitores",
+    books: [
+      ["Harry Potter e a Pedra Filosofal","J. K. Rowling","Um garoto órfão descobre, ao completar 11 anos, que é um bruxo e é convidado a estudar em Hogwarts.",4.9,612,["Fantasia","Aventura"]],
+      ["Extraordinário","R. J. Palacio","Auggie tem uma diferença facial rara e enfrenta seu primeiro ano na escola comum, ensinando a todos sobre bondade e aceitação.",4.9,362,["Infantojuvenil","Drama"]],
+      ["O Pequeno Príncipe","Antoine de Saint-Exupéry","Um piloto perdido no deserto encontra um pequeno príncipe vindo de outro planeta, que lhe ensina sobre amor, perda e o que realmente importa na vida.",4.8,540,["Fábula","Infantojuvenil"]],
+      ["A Menina que Roubava Livros","Markus Zusak","Narrado pela Morte, o livro acompanha Liesel, que encontra consolo nos livros durante a Alemanha nazista.",4.8,298,["História","Drama"]],
+      ["1984","George Orwell","Em um regime totalitário que vigia cada pensamento, Winston Smith arrisca tudo para pensar por conta própria e amar livremente.",4.7,489,["Distopia","Ficção científica"]],
+      ["O Diário de Anne Frank","Anne Frank","O relato real de uma adolescente escondida durante a Segunda Guerra Mundial, sobre esperança, medo e a vontade de viver.",4.7,401,["Biografia","História"]],
+      ["Jogos Vorazes","Suzanne Collins","Katniss se voluntaria para um torneio mortal em um futuro distópico, onde apenas um participante pode sobreviver.",4.7,470,["Distopia","Aventura"]],
+      ["O Hobbit","J. R. R. Tolkien","Bilbo Bolseiro é arrastado para uma jornada inesperada ao lado de anões e um mago, em busca de um tesouro guardado por um dragão.",4.7,455,["Fantasia","Aventura"]],
+    ]
+  }
+];
+
+// achata em objetos de livro com id único
+let uid = 0;
+const books = [];
+categories.forEach(cat=>{
+  cat.bookRefs = cat.books.map(b=>{
+    const [title, author, synopsis, rating, likes, tags] = b;
+    const existing = books.find(x=>x.title===title);
+    if(existing) return existing;
+    const book = { id: uid++, title, author, synopsis, rating, likes, tags, liked:false };
+    books.push(book);
+    return book;
+  });
+});
+
+function starString(rating){
+  const full = Math.round(rating);
+  return "★★★★★".slice(0,full) + "☆☆☆☆☆".slice(0, 5-full);
+}
+
+function renderCoverStyle(book){
+  const [c1,c2] = paletteFor(book.title);
+  return `background: linear-gradient(155deg, ${c1}, ${c2}); color:#f2e9dc;`;
+}
+
+/* ---------- render rows ---------- */
+const rowsEl = document.getElementById('rows');
+
+categories.forEach(cat=>{
+  const section = document.createElement('section');
+  section.className = 'row';
+  section.id = cat.id;
+  section.innerHTML = `
+    <h2 class="row-title">${cat.title}</h2>
+    <div class="row-track-wrap">
+      <button class="row-arrow left" aria-label="Anterior">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="row-track"></div>
+      <button class="row-arrow right" aria-label="Próximo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  `;
+  const track = section.querySelector('.row-track');
+  cat.bookRefs.forEach(book=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.id = book.id;
+    card.innerHTML = `
+      <div class="card-cover">
+        <img class="book-cover-image" alt="Capa de ${book.title}">
+        <div class="cover-overlay"></div>
+        <div class="cover-fallback">
+          <div class="spine-title">${book.title}</div>
+          <div class="spine-author">${book.author}</div>
+        </div>
+      </div>
+      <div class="card-badge">
+        <span class="stars">${starString(book.rating)}</span>
+        <span>${book.likes}♥</span>
+      </div>
+    `;
+
+    const coverImg = card.querySelector('.book-cover-image');
+    const coverFallback = card.querySelector('.cover-fallback');
+    setCoverImage(coverImg, coverFallback, book);
+
+    card.addEventListener('click', ()=>openModal(book.id));
+    track.appendChild(card);
+  });
+
+  section.querySelector('.row-arrow.left').addEventListener('click', ()=>{
+    track.scrollBy({ left: -track.clientWidth * 0.85, behavior:'smooth' });
+  });
+  section.querySelector('.row-arrow.right').addEventListener('click', ()=>{
+    track.scrollBy({ left: track.clientWidth * 0.85, behavior:'smooth' });
+  });
+
+  rowsEl.appendChild(section);
+});
+
+/* ---------- hero ---------- */
+const heroBook = books[1]; // O Pequeno Príncipe como destaque inicial
+document.getElementById('heroTitle').textContent = heroBook.title;
+document.getElementById('heroAuthor').textContent = heroBook.author;
+document.getElementById('heroStars').textContent = starString(heroBook.rating) + "  " + heroBook.rating.toFixed(1);
+document.getElementById('heroSynopsis').textContent = heroBook.synopsis;
+const [hc1,hc2] = paletteFor(heroBook.title);
+document.getElementById('hero').style.background =
+  `radial-gradient(circle at 75% 30%, ${hc1}, ${hc2} 60%, #141414 100%)`;
+
+document.getElementById('heroDetailsBtn').addEventListener('click', ()=>openModal(heroBook.id));
+document.getElementById('heroInfoBtn').addEventListener('click', ()=>openModal(heroBook.id));
+
+/* ---------- modal ---------- */
+const overlay = document.getElementById('modalOverlay');
+
+function openModal(bookId){
+  const book = books.find(b=>b.id===bookId);
+  if(!book) return;
+
+  document.getElementById('modalBannerTitle').textContent = book.title;
+  document.getElementById('modalBanner').style.background = `linear-gradient(180deg, ${paletteFor(book.title)[0]}aa, transparent)`;
+
+  const modalCover = document.getElementById('modalCover');
+  const modalCoverImage = document.getElementById('modalCoverImage');
+  const modalCoverFallback = document.getElementById('modalCoverFallback');
+  document.getElementById('modalCoverTitle').textContent = book.title;
+  document.getElementById('modalCoverAuthor').textContent = book.author;
+  setCoverImage(modalCoverImage, modalCoverFallback, book);
+  document.getElementById('modalAuthor').textContent = 'de ' + book.author;
+  document.getElementById('modalStars').textContent = starString(book.rating);
+  document.getElementById('modalRatingNum').textContent = book.rating.toFixed(1) + ' / 5';
+  document.getElementById('modalSynopsis').textContent = book.synopsis;
+  document.getElementById('likeCount').textContent = book.likes;
+
+  const likeBtn = document.getElementById('likeBtn');
+  likeBtn.classList.toggle('liked', book.liked);
+  likeBtn.onclick = ()=>{
+    book.liked = !book.liked;
+    book.likes += book.liked ? 1 : -1;
+    document.getElementById('likeCount').textContent = book.likes;
+    likeBtn.classList.toggle('liked', book.liked);
+  };
+
+  document.getElementById('modalTags').innerHTML = book.tags.map(t=>`<span class="tag">${t}</span>`).join('');
+
+  // reviews de exemplo (determinístico por livro)
+  const reviewsEl = document.getElementById('modalReviews');
+  reviewsEl.innerHTML = '';
+  const names = ['Ana', 'Bruno', 'Carla', 'Diego', 'Elisa'];
+  for(let i=0;i<2;i++){
+    const idx = (book.id + i) % reviewPool.length;
+    const name = names[(book.id + i*3) % names.length];
+    const stars = Math.max(3, Math.round(book.rating) - (i%2));
+    const div = document.createElement('div');
+    div.className = 'review';
+    div.innerHTML = `
+      <div class="review-head">
+        <span class="review-user">${name}</span>
+        <span class="review-stars">${starString(stars)}</span>
+      </div>
+      <div class="review-text">${reviewPool[idx]}</div>
+    `;
+    reviewsEl.appendChild(div);
+  }
+
+  overlay.classList.add('open');
+}
+
+document.getElementById('modalClose').addEventListener('click', ()=> overlay.classList.remove('open'));
+overlay.addEventListener('click', (e)=>{ if(e.target === overlay) overlay.classList.remove('open'); });
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') overlay.classList.remove('open'); });
+
+/* ---------- navbar scroll ---------- */
+window.addEventListener('scroll', ()=>{
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+/* ---------- busca simples ---------- */
+document.getElementById('searchInput').addEventListener('input', (e)=>{
+  const q = e.target.value.trim().toLowerCase();
+  document.querySelectorAll('.card').forEach(card=>{
+    const book = books.find(b=>b.id == card.dataset.id);
+    const match = !q || book.title.toLowerCase().includes(q) || book.author.toLowerCase().includes(q);
+    card.style.display = match ? 'flex' : 'none';
+  });
+});
+</script>
+</body>
+</html>
