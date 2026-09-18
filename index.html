@@ -909,45 +909,6 @@ function setCoverImage(img, fallback, book){
   tryNext();
 }
 
-function coverCandidates(book){
-  const mapped = coverMap[book.title];
-  if(mapped){
-    const candidates = ['capas/' + mapped + '.jpg', 'capas/' + mapped + '.png', 'capas/' + mapped + '.jpeg', 'capas/' + mapped + '.webp'];
-    return [...new Set(candidates)];
-  }
-  const slug = slugify(book.title);
-  return [
-    'capas/' + slug + '.jpg',
-    'capas/' + slug + '.png',
-    'capas/' + slug + '.jpeg',
-    'capas/' + slug + '.webp'
-  ];
-}
-
-function setCoverImage(img, fallback, book){
-  const candidates = coverCandidates(book);
-  let index = 0;
-  fallback.style.display = 'none';
-  img.style.display = 'block';
-
-  function tryNext(){
-    if(index >= candidates.length){
-      img.style.display = 'none';
-      fallback.style.display = 'flex';
-      fallback.style.cssText += ';' + renderCoverStyle(book);
-      return;
-    }
-    img.src = candidates[index++];
-  }
-
-  img.onerror = tryNext;
-  img.onload = () => {
-    img.style.display = 'block';
-    fallback.style.display = 'none';
-  };
-  tryNext();
-}
-
 const palettes = [
   ['#7b2d26','#3a1210'], ['#1f3a5f','#0d1b2e'], ['#3d2b56','#1a1030'],
   ['#0f5132','#08331f'], ['#7a4b19','#3d2409'], ['#5f1f3a','#2e0e1c'],
